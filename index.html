@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Captioning & Q&A</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        .btn11{
+            background-image: radial-gradient( circle farthest-corner at 10% 20%,  rgba(178,0,184,1) 0%, rgba(71,0,159,1) 90% );
+            transition: all 0.3s ease-in-out;
+        }
+        .btn11:hover{
+            background-image: radial-gradient( circle farthest-corner at 10% 20%, rgba(213,105,167,1)  0%, rgba(117,86,204,1) 90% );
+        }
+        .a-btn{
+            border: 2px solid rgba(71,0,159,1);
+            color: rgba(71,0,159,1);
+            margin-bottom: 15px;
+            transition: all 0.3s ease-in-out;
+        }
+        .a-btn:hover{
+            background: rgba(71,0,159,1);
+            color: #fff;
+        }
+        .p-text{
+            color: rgba(178,0,184,1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="container mx-auto p-6 bg-white shadow-md rounded-lg w-3/4 grid grid-cols-2 gap-6">
+        <!-- Left Section: Image Upload & Question Input -->
+        <div>
+            <div>
+                <a href="/enhance" class="mt-4 inline-block px-4 py-2 a-btn rounded">Click here for image enhancer</a>
+            </div>
+            <h2 class="text-xl font-bold text-gray-700">Image Captioning & Q&A</h2>
+            
+            <form id="upload-form" enctype="multipart/form-data" class="mt-4">
+                <input type="file" id="image-input" name="image" accept="image/*" required
+                       class="w-full p-2 border rounded">
+                <button type="submit" class="mt-3 w-full btn11 text-white py-2 px-4 rounded">
+                    Generate Description
+                    <div class="loader hidden" id="loader">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 6 12 6z"></path>
+                        </svg>
+                    </div>
+                </button>
+            </form>
+            
+            <div id="image-container" class="hidden mt-4">
+                <h3 class="text-lg font-semibold text-gray-600">Uploaded Image:</h3>
+                <img id="uploaded-image" src="" alt="Uploaded Image" class="w-full mt-2 rounded shadow">
+                <h3 class="text-lg font-semibold text-gray-600 mt-4">Generated Description:</h3>
+                <p id="caption" class="response p-2 bg-gray-200 rounded"></p>
+            </div>
+            
+        </div>
+
+        <!-- Right Section: Chat Box -->
+        <div class="p-4 bg-gray-50 rounded shadow-md">
+            <h3 class="text-lg font-semibold text-gray-600">Chat History</h3>
+            <div id="chat-box" class="mt-2 h-80 overflow-y-auto p-3 bg-white border rounded shadow-inner">
+                <p class="text-gray-400">No conversation yet...</p>
+            </div>
+            <div id="qa-section" class="hidden mt-4">
+                <h3 class="text-lg font-semibold text-gray-600">Ask a Question:</h3>
+                <input type="text" id="question-input" placeholder="Type your question..."
+                       class="w-full p-2 border rounded mt-2">
+                <button id="ask-button" class="mt-2 w-full btn11 text-white py-2 px-4 rounded">
+                    Ask
+                </button>
+            </div>
+        </div>
+    </div>
+    <br><br><br>
+
+    <script>
+        $(document).ready(function () {
+            $("#upload-form").submit(function (event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                
+                // Show the loader
+                $("#loader").removeClass("hidden");
+                
+                $.ajax({
+                    url: "/api/generate_caption",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.description) {
+                            $("#uploaded-image").attr("src", URL.createObjectURL($("#image-input")[0].files[0]));
+                            $("#caption").text(response.description);
+                            $("#image-container").show();
+                            $("#qa-section").show();
+                        } else {
+                            alert("Error generating caption.");
+                        }
+                        
+                        // Hide the loader
+                        $("#loader").addClass("hidden");
+                    },
+                    error: function () {
+                        alert("Failed to generate caption.");
+                        
+                        // Hide the loader
+                        $("#loader").addClass("hidden");
+                    }
+                });
+            });
+            
+            $("#ask-button").click(function () {
+                var question = $("#question-input").val();
+                if (!question.trim()) return;
+                
+                var formData = new FormData();
+                formData.append("image", $("#image-input")[0].files[0]);
+                formData.append("question", question);
+                
+                var chatBox = $("#chat-box");
+                chatBox.append(`<p class='font-semibold p-text'>You: ${question}</p>`);
+                
+                $.ajax({
+                    url: "/api/ask",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function() {
+                        chatBox.append(`<p class='text-gray-500'>Thinking...</p>`);
+                    },
+                    success: function (response) {
+                        $("#chat-box p:last-child").remove(); // Remove 'Thinking...'
+                        if (response.answer) {
+                            chatBox.append(`<p class='text-blue-700'>AI: ${response.answer}</p>`);
+                        } else {
+                            chatBox.append(`<p class='text-red-600'>Error processing question.</p>`);
+                        }
+                    },
+                    error: function () {
+                        chatBox.append(`<p class='text-red-600'>Failed to process question.</p>`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
