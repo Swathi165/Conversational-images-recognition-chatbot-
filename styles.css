@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+:root {
+    --glow-color: hsl(186 100% 69%);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background: #050a30;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+.home-page{
+    width: 100%;
+    height: 100vh;
+    background: url(img/Glowing-Captions-Ideas-1.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+nav{
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: space-between;
+}
+
+.logo img{
+    width: 50px;
+    height: 50px;
+}
+nav ul{
+    display: flex;
+    gap: 20px;
+    padding: 8px;
+}
+nav ul li{
+    list-style: none;
+    margin-top: 10px;
+}
+
+nav ul li a{
+    color: aquamarine;
+    font-family: "Poppins", sans-serif;
+    margin-right: 20px;
+    transition: all 0.5s;
+}
+
+nav ul li a:hover{
+    transform: scale(1.1);
+    color: gold;
+}
+
+.text-container{
+    width: 50%;
+    height: 50%;
+    position: absolute;
+    margin-left: 45%;
+    margin-top: 5%;
+}
+.text-container h1{
+    font-family: "MedievalSharp", cursive;
+    font-size: 5rem;
+    line-height: 120px;
+    color: aquamarine;
+}
+a{
+    text-decoration: none;
+    color: navy;
+    letter-spacing: 1px;
+}
+a:hover{
+    color: aquamarine;
+}
+
+.btn{
+    width: 200px;
+    height: 40px;
+    background-color: aquamarine;
+    justify-content: center;
+    margin: 0 auto;
+    font-family: "MedievalSharp", cursive;
+    font-weight: 600;
+    font-size: 1.5rem;
+    padding-top: 15px;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(255, 2555, 255, 0.8);
+    transition: all 0.5s;
+    
+}
+
+.btn:hover{
+    transform: scale(1.1);
+    box-shadow: 0 0px 10px rgba(255, 2555, 255, 0.8);
+    background-color: transparent;
+}
+
+.text-container p{
+    color: #fff;
+    padding-top: 40px;
+    font-size: 1.2rem;
+    line-height: 30px;
+    text-align: right;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#caption{
+    width: 100%;
+    padding-bottom: 100px;
+}
+
+#caption h1{
+    font-family: "MedievalSharp", cursive;
+    color: aquamarine;
+    font-size: 3rem;
+}
+
+.form-container{
+    width: 80%;
+    /* background: #050a30; */
+    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    margin: 0 auto;
+    padding-bottom: 100px;
+}
+
+form {
+    margin: 20px auto;
+}
+
+form img{
+    width: 60%;
+    margin-left: 10%;
+}
+.box{
+    margin: 0 auto;
+    width: 300px;
+    height: 50px;
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50px;
+}
+input[type="file"] {
+    padding: 10px;
+    font-size: 1.2rem;
+    color: #000000;
+}
+
+input[type="submit"] {
+    height: 50px;
+    margin-top: 30px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    -webkit-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+    0px 0px 0.5em 0px var(--glow-color);
+    -moz-box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+    0px 0px 0.5em 0px var(--glow-color);
+    box-shadow: inset 0px 0px 0.5em 0px var(--glow-color),
+    0px 0px 0.5em 0px var(--glow-color);
+    transition: all 0.5s;
+}
+
+input[type="submit"]:hover{
+    transform: scale(1.1);
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+img {
+    margin: 20px;
+    border-radius: 10px;
+}
+#loader {
+    display: none;
+    margin: 20px auto;
+}
+
+@media (max-width:1024px) {
+    .text-container h1{
+        font-size: 3rem;
+    }
+}
