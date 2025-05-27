@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Enhancement</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+
+    <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+        <h1 class="text-2xl font-bold text-blue-600">Enhance Your Image</h1>
+
+        <form id="uploadForm" enctype="multipart/form-data" class="mt-4">
+            <input type="file" id="imageInput" name="image" accept="image/*" required 
+                   class="border p-2 rounded w-full">
+            <br>
+            <button id="enhanceButton" type="submit" 
+                    class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                Enhance Image
+            </button>
+            <!-- Loader -->
+            <div id="loader" class="hidden mt-4">
+                <div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p class="text-sm text-gray-500 mt-2">Enhancing Image...</p>
+            </div>
+        </form>
+
+        <div id="previewContainer" class="hidden mt-6">
+            <h2 class="text-lg font-semibold text-gray-700">Preview</h2>
+            <div class="flex justify-center space-x-4 mt-2">
+                <div>
+                    <p class="text-sm text-gray-500">Original Image</p>
+                    <img id="originalImage" class="w-48 h-auto rounded shadow">
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Enhanced Image</p>
+                    <img id="enhancedImage" class="w-48 h-auto rounded shadow">
+                </div>
+            </div>
+            <a id="downloadLink" class="mt-4 inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 hidden">
+                Download Enhanced Image
+            </a>
+        </div>
+
+        <a href="/" class="block mt-4 text-blue-500 hover:underline text-left">Back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            let fileInput = document.getElementById("imageInput");
+            let file = fileInput.files[0];
+            if (!file) return;
+
+            let formData = new FormData();
+            formData.append("image", file);
+
+            // Show Loader and Disable Button
+            let enhanceButton = document.getElementById("enhanceButton");
+            let loader = document.getElementById("loader");
+            enhanceButton.disabled = true;
+            loader.classList.remove("hidden");
+
+            document.getElementById("previewContainer").classList.add("hidden");
+
+            // Show Original Image Preview
+            let originalImage = document.getElementById("originalImage");
+            originalImage.src = URL.createObjectURL(file);
+
+            let response = await fetch("/upload", { method: "POST", body: formData });
+            let data = await response.json();
+
+            // Hide Loader and Enable Button
+            enhanceButton.disabled = false;
+            loader.classList.add("hidden");
+
+            if (data.success) {
+                let enhancedImage = document.getElementById("enhancedImage");
+                enhancedImage.src = data.enhanced_url;
+
+                let downloadLink = document.getElementById("downloadLink");
+                downloadLink.href = data.enhanced_url;
+                downloadLink.download = "enhanced_" + file.name;
+                downloadLink.classList.remove("hidden");
+
+                document.getElementById("previewContainer").classList.remove("hidden");
+            }
+        });
+    </script>
+
+</body>
+</html>
